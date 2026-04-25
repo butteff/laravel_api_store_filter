@@ -1,5 +1,6 @@
 ## Запуск проекта для теста:
 
+0. composer install
 1. php artisan migrate:fresh --seed
 2. php artisan optimize
 3. php artisan serve
