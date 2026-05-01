@@ -12,20 +12,16 @@ class ApiController extends Controller
     {
         $res = [];
         $api = new Api($request, 'store');
-
+        
         $validated = $api->validation(); // request validation
 
         if ($validated->fails()) { // errors on validation:
-            $res['status'] = 'fail';
-            foreach ($validated->errors()->all() as $err) {
-                $res['errors'][] = $err;
-            }
+            $res = $api->errors();
         } else { // filter, sorting and pagination:
-            $res['status'] = 'ok';
             $api->filter();
             $api->sorting();
             $api->pagination();
-            $res['data'] = $api->result();
+            $res = $api->result();
         }
 
         return $res;

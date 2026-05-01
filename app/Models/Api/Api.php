@@ -12,6 +12,7 @@ class Api extends Validation
     const PER_PAGE = 10; // per page value
 
     public $res = [];
+    public $validated = false;
     private $params = [];
     private $action = null;
     private $model = null;
@@ -36,7 +37,7 @@ class Api extends Validation
     public function filter(): void
     {
         // filter:
-        $this->model->where('name', 'like', '%' . $this->params['q'] . '%'); //search name filter
+        if (isset($this->params['q'])) $this->model->where('name', 'like', '%' . $this->params['q'] . '%'); //search name filter
         if (isset($this->params['rating_from'])) $this->model->where('rating', '>=', $this->params['rating_from']); // rating filter
         if (isset($this->params['category_id'])) $this->model = $this->model->where(['category_id' => $this->params['category_id']]); //category filter
         if (isset($this->params['in_stock'])) $this->model = $this->model->where(['in_stock' => $this->params['in_stock']]); //in_stock filter
@@ -67,8 +68,9 @@ class Api extends Validation
     public function result(): array
     {  
         $all_count = $this->model->count();
-        $this->res['products'] = $this->model->items();
-        $this->res['products_amount'] = $all_count;
+        $this->res['status'] = 'ok';
+        $this->res['data'] = $this->model->items();
+        $this->res['data_amount'] = $all_count;
         $this->res['pagination'] = [
             'next_page_url' => $this->model->nextPageUrl(),
             'previous_page_url' => $this->model->previousPageUrl(),
@@ -78,11 +80,20 @@ class Api extends Validation
         return $this->res;
     }
 
+    public function errors(): array
+    {
+        $this->res['status'] = 'fail';
+        foreach ($this->validated->errors()->all() as $err) {
+            $this->res['errors'][] = $err;
+        }
+        return $this->res;
+    }
+
     public function validation(): Validator
     {
         switch($this->action) {
             case 'store':
-                return $this->validationStore($this->params);
+                $this->validated = $this->validationStore($this->params);
             break;
 
             /*
@@ -91,6 +102,8 @@ class Api extends Validation
             break; 
             */
         }
+
+        return $this->validated;
     }
    
 }
