@@ -6,7 +6,7 @@ English overview first, Russian overview at the end of this Readme.md file:
 1. php artisan migrate:fresh --seed
 2. php artisan optimize
 3. php artisan serve
-4. Открыть в браузере ссылку, например, http://127.0.0.1:8000/api/products?q=lg&sort=newest&price_from=111&category_id=1&in_stock=1
+4. Test API query, for example, test this url: http://127.0.0.1:8000/api/products?q=lg&sort=newest&price_from=111&category_id=1&in_stock=1
 
 ## The task
 
